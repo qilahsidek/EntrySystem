@@ -3,10 +3,18 @@ const mongoose = require("mongoose");
 const app = express();
 //const bodyParser = require("body-parser");
 require('dotenv').config();
+const guestRoute = require('./routes/guest');
 
 const PORT = process.env.PORT || 5000;
 
+//middleware
+app.use(express.json());
+app.use(express.urlencoded({extended:true}));
 
+//routes
+app.use('/api/guest', guestRoute);
+
+//connect to mongodb
 mongoose.connect(
     process.env.MONGO_URL, 
     {useNewUrlParser: true}
