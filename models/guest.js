@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const Entry = require('./entry');
+const yup = require('yup');
+
 //guest schema
 const GuestSchema = new mongoose.Schema({
     Guest_type:{
@@ -7,30 +9,28 @@ const GuestSchema = new mongoose.Schema({
         required:true,
     }, 
     EntryDetails: Entry.schema,
-    /*GuestID:{
-        type:String,
-        required:true,
-    },
-    Date:{
-        type:String,
-        required:true,
-    },
-    CheckinTime:{
-        type:Number,
-        required:true,
-    },
-    CheckoutTime:{
-        type:Number,
-        required:true,
-    },
-    Transport_type:{
-        type:String,
-        required:true,
-    },
-    PlateNum:{
-        type:String,
-        required:true,
-    }*/ 
 });
 
-module.exports = new mongoose.model('Guest', GuestSchema);
+const validateGuest = guest => {
+    const schema = yup.object().shape({
+        guestType:yup.string().required(),
+        entryGuestId:yup.string().required(),
+        entryDate:yup.string().required(),
+        entryCheckin:yup.string().required(),
+        entryCheckout:yup.string().required(),
+        entryTransport:yup.string().required(),
+        entryPlate:yup.string().required()
+    });
+
+    return schema
+        .validate(guest)
+        .then((guest) => guest)
+        .catch((error) => {
+            return {
+                message:error.message
+            }
+        });
+};
+
+exports.Guest = new mongoose.model('Guest', GuestSchema);
+exports.validateGuest = validateGuest;
